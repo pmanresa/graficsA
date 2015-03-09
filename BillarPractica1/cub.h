@@ -1,12 +1,11 @@
 #ifndef CUB_H
 #define CUB_H
-
+#include <Common.h>
 #include <QGLShaderProgram>
 #include <QOpenGLTexture>
 
-
 #include <stdio.h>
-#include <Common.h>
+
 
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
 
@@ -45,8 +44,7 @@ class cub
       color4 colors[NumVertices]; // colors en aquests punts
       vec2 vertexsTextura[NumVertices]; // coordenades de textura associades a cada vertex
 
-      QOpenGLTexture *texture[2];
-
+      QOpenGLTexture *texture;
 };
 
 #endif // CUB_H

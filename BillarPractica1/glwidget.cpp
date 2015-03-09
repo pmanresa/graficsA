@@ -152,6 +152,10 @@ void GLWidget::paintGL()
        esc->taulaBillar->aplicaTGCentrat(transform);
        esc->draw();
    }
+   if (esc->plaBase!=NULL) {
+       esc->plaBase->aplicaTGCentrat(transform);
+       esc->draw();
+   }
 }
 
 
@@ -237,6 +241,10 @@ void GLWidget::newPlaBase()
     // Metode que crea un objecte PlaBase poligon amb el punt central al (0,0,0) i perpendicular a Y=0
 
     // Metode a implementar
+    PlaBase *obj;
+
+    obj = new PlaBase();
+    newObjecte(obj);
 
 }
 
