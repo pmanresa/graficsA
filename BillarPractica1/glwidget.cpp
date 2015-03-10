@@ -156,6 +156,11 @@ void GLWidget::paintGL()
        esc->plaBase->aplicaTGCentrat(transform);
        esc->draw();
    }
+
+   if (esc->bola!=NULL) {
+       esc->bola->aplicaTGCentrat(transform);
+       esc->draw();
+   }
 }
 
 
@@ -260,14 +265,19 @@ void GLWidget::newObj(QString fichero)
 void GLWidget::newBola()
 {
     // Metode que crea la Bola blanca de joc
-     // Metode a implementar
+    Bola *obj;
+
+    obj = new Bola();
+    newObjecte(obj);
 }
+
 void GLWidget::newConjuntBoles()
 {
     // Metode que crea les 15 Boles del billar america
     // Metode a implementar
 
 }
+
 void GLWidget::newSalaBillar()
 {
     // Metode que construeix tota la sala de billar: taula, 15 boles i bola blanca
