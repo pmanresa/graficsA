@@ -231,6 +231,8 @@ void GLWidget::keyReleaseEvent(QKeyEvent *event)
 void GLWidget::adaptaObjecteTamanyWidget(Objecte *obj)
 {
         // Metode a implementar
+
+
 }
 
 void GLWidget::newObjecte(Objecte * obj)

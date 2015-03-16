@@ -23,11 +23,13 @@ private:
     void triangle( const point4& a, const point4& b, const point4& c );
     void initTextura();
     point4 normalize(point4);
+    void divide_triangle( const point4& a, const point4& b, const point4& c );
+
     static const int NumVerticesF = 12;
 
+    int NumMaxIteracions = 10;
     point4 v[4]; // 4 vertexs de la Bola (tetraedre inicial)
     color4 vertex_colors[4]; // 4 colors RGBA associats a cada vertex
-
 
     QOpenGLTexture *texture;
 };

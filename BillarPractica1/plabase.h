@@ -22,8 +22,7 @@ class PlaBase: public Objecte
       PlaBase(int an, int al, GLfloat x0, GLfloat y0, GLfloat z0);
       ~PlaBase();
       void make();
-
-
+      void toGPU(QGLShaderProgram *program);
 
   private:
 

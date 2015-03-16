@@ -84,7 +84,7 @@ void PlaBase::make()
 
 
 
-    //initTextura();
+    initTextura();
 
 }
 
@@ -102,6 +102,57 @@ void PlaBase::initTextura()
      texture->bind(0);
 
  }
+
+
+void PlaBase::toGPU(QGLShaderProgram *program){
+
+    std::cout<<"Pas de les dades del cub a la GPU\n";
+
+    // S'activa la textura i es passa a la GPU
+    texture->bind(0);
+    program->setUniformValue("texMap", 0);
+
+    // Creacio i inicialitzacio d'un vertex buffer object (VBO)
+    GLuint buffer;
+    glGenBuffers( 1, &buffer );
+
+    // Activació a GL del Vertex Buffer Object
+    glBindBuffer( GL_ARRAY_BUFFER, buffer );
+
+    // Transferència dels punts, colors i coordenades de textura al vertex buffer object
+    glBufferData( GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors)+sizeof(vertexsTextura),
+                  NULL, GL_STATIC_DRAW );
+    glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(points), points );
+    glBufferSubData( GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors );
+    glBufferSubData( GL_ARRAY_BUFFER, sizeof(points)+sizeof(colors), sizeof(vertexsTextura), vertexsTextura );
+
+
+    // Definició de la correspondència de les variables del shader vPosition i vColor
+
+    int vertexLocation = program->attributeLocation("vPosition");
+    int colorLocation = program->attributeLocation("vColor");
+    int coordTextureLocation = program->attributeLocation("vCoordTexture");
+    program->enableAttributeArray(vertexLocation);
+    program->setAttributeBuffer("vPosition", GL_FLOAT, 0, 4);
+
+    program->enableAttributeArray(colorLocation);
+    program->setAttributeBuffer("vColor", GL_FLOAT, sizeof(points), 4);
+
+    program->enableAttributeArray(coordTextureLocation);
+    program->setAttributeBuffer("vCoordTexture", GL_FLOAT, sizeof(points)+sizeof(colors), 2);
+
+    // Activació de la correspondencia entre les variables
+    program->bindAttributeLocation("vPosition", vertexLocation);
+    program->bindAttributeLocation("vColor", colorLocation);
+    program->bindAttributeLocation("vCoordTexture", coordTextureLocation);
+
+
+    glEnable( GL_DEPTH_TEST );
+    glEnable(GL_TEXTURE_2D);
+    program->bind();
+
+}
+
 
 
 

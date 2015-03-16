@@ -56,24 +56,60 @@ void Bola::make()
     std::cout<<"Estic en el make de la Bola\n";
     // generacio de la geometria dels triangles per a visualitzar-lo
     Index = 0;
-    /*point4 v1 = this->normalize( v[0] + v[1] );
-    point4 v2 = this->normalize( v[0] + v[2] );
-    point4 v3 = this->normalize( v[1] + v[2] );
-    */
+
+    point4 v1;
+    point4 v2;
+    point4 v3;
+
+    int i =0;
 
     triangle( v[0], v[1], v[2]);
     triangle( v[3], v[2], v[1]);
     triangle( v[0], v[3], v[1]);
     triangle( v[0], v[2], v[3]);
-    /*
-    triangle(v[0], v1, v2);
-    triangle(v[2], v2, v3);
-    triangle(v[1], v3, v1);
-    triangle(v1, v3, v2);
-    */
 
+    //for(i=0; i<20; i++){
+
+
+
+         divide_triangle(v[0],v1,v2);
+         divide_triangle(v[2], v2, v3);
+         divide_triangle(v[1], v3, v1);
+         divide_triangle(v1, v3, v2);
+
+    //}
 
     //initTextura();
+
+}
+
+void Bola::divide_triangle( const point4& a, const point4& b, const point4& c )
+{
+
+    point4 v1;
+    point4 v2;
+    point4 v3;
+
+   if (NumMaxIteracions <= 0 ){
+        v1 = this->normalize( v[0] + v[1] );
+        v2 = this->normalize( v[0] + v[2] );
+        v3 = this->normalize( v[1] + v[2] );
+
+        divide_triangle(v[0],v1,v2);
+        divide_triangle(v[2], v2, v3);
+        divide_triangle(v[1], v3, v1);
+        divide_triangle(v1, v3, v2);
+
+        NumMaxIteracions--;
+
+    }else{
+       triangle( v[0], v[1], v[2]);
+       triangle( v[3], v[2], v[1]);
+       triangle( v[0], v[3], v[1]);
+       triangle( v[0], v[2], v[3]);
+
+
+   }
 
 }
 
@@ -86,6 +122,7 @@ point4 Bola::normalize(point4 vector){
     vector[0] = vector[0]/modulo;
     vector[1] = vector[1]/modulo;
     vector[2] = vector[2]/modulo;
+    vector[3] = 1.0;
 
     return vector;
 
@@ -105,6 +142,8 @@ void Bola::initTextura()
      texture->bind(0);
 
  }
+
+
 
 
 
