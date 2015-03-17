@@ -230,8 +230,16 @@ void GLWidget::keyReleaseEvent(QKeyEvent *event)
 
 void GLWidget::adaptaObjecteTamanyWidget(Objecte *obj)
 {
-        // Metode a implementar
+   // Metode a implementar
+    mat4 escalat;
+    mat4 translacio;
+    mat4 rotacio;
 
+    escalat = Scale(obj->a/20, obj->h/20, obj->p/20 );
+    translacio = Translate(obj->xorig/20, obj->yorig/20, obj->zorig/20 );
+    //rotacio = RotateX(obj->xRot)*RotateY(obj->yRot)*RotateZ(obj->zRot);
+
+    obj->aplicaTG(identity()*escalat*translacio*rotacio);
 
 }
 

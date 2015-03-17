@@ -7,7 +7,9 @@ Bola::Bola() : Objecte(NumVerticesF)
     // Bola centrat al 0,0,0 amb dimensió 1 a totes les seves arestes
     xorig = 0; yorig = 0; zorig = 0;
 
-
+    a = 1;
+    h = 1;
+    p = 1;
 
     // Vertices of a unit Bola centered at origin, sides aligned with axes
     v[0] = point4( 0.0, 0.0, 1.0, 1.0  );
@@ -16,13 +18,11 @@ Bola::Bola() : Objecte(NumVerticesF)
     v[3] = point4(  0.816497, -0.471405, -0.333333, 1.0 );
 
 
-
     // RGBA colors
     vertex_colors[0] =    color4( 0.0, 0.0, 1.0, 1.0 );  // black
     vertex_colors[1] =    color4( 1.0, 0.0, 0.0, 1.0 );  // red
     vertex_colors[2] =    color4( 1.0, 1.0, 0.0, 1.0 );  // yellow
     vertex_colors[3] =    color4( 0.0, 1.0, 0.0, 1.0 );  // green
-
 
     make();
 
@@ -68,46 +68,40 @@ void Bola::make()
     triangle( v[0], v[3], v[1]);
     triangle( v[0], v[2], v[3]);
 
-    //for(i=0; i<20; i++){
 
+    divide_triangle(v[0], v[1], v[2] ,0);
+    divide_triangle(v[3], v[2], v[1], 0);
+    divide_triangle(v[0], v[3], v[1], 0);
+    divide_triangle(v[0], v[2], v[3], 0);
 
-
-         divide_triangle(v[0],v1,v2);
-         divide_triangle(v[2], v2, v3);
-         divide_triangle(v[1], v3, v1);
-         divide_triangle(v1, v3, v2);
-
-    //}
-
+    qDebug() << "Iaaaaaaaaaaaaaaaaa";
     //initTextura();
 
 }
 
-void Bola::divide_triangle( const point4& a, const point4& b, const point4& c )
+void Bola::divide_triangle( const point4& a, const point4& b, const point4& c, int i)
 {
 
     point4 v1;
     point4 v2;
     point4 v3;
 
-   if (NumMaxIteracions <= 0 ){
-        v1 = this->normalize( v[0] + v[1] );
-        v2 = this->normalize( v[0] + v[2] );
-        v3 = this->normalize( v[1] + v[2] );
+   if (i < NumMaxIteracions ){
 
-        divide_triangle(v[0],v1,v2);
-        divide_triangle(v[2], v2, v3);
-        divide_triangle(v[1], v3, v1);
-        divide_triangle(v1, v3, v2);
+        i++;
 
-        NumMaxIteracions--;
+        v1 = this->normalize( a + b );
+        v2 = this->normalize( a + c );
+        v3 = this->normalize( b + c );
+
+        divide_triangle(a,v1,v2, i);
+        divide_triangle(c, v2, v3, i);
+        divide_triangle(b, v3, v1, i);
+        divide_triangle(v1, v3, v2, i);
 
     }else{
-       triangle( v[0], v[1], v[2]);
-       triangle( v[3], v[2], v[1]);
-       triangle( v[0], v[3], v[1]);
-       triangle( v[0], v[2], v[3]);
 
+       triangle( a, b, c);
 
    }
 
