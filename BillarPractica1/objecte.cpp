@@ -39,9 +39,42 @@ Capsa3D Objecte::calculCapsa3D()
 {
 
     // Metode a implementar: calcula la capsa mínima contenidora d'un objecte
-    int i;
     vec3    pmin, pmax;
+    pmin.x = vertexs[0].x;
+    pmin.y = vertexs[0].y;
+    pmin.z = vertexs[0].z;
+    pmax.x = vertexs[0].x;
+    pmax.y = vertexs[0].y;
+    pmax.z = vertexs[0].z;
 
+    //recorrem els vertex
+    for(int i=0;i<vertexs.size();i++){
+        if(pmin.x>vertexs[i].x){
+            pmin.x=vertexs[i].x;
+        }
+        if(pmin.y>vertexs[i].y){
+            pmin.y=vertexs[i].y;
+        }
+        if(pmin.z>vertexs[i].z){
+            pmin.z=vertexs[i].z;
+        }
+
+        if(pmax.x<vertexs[i].x){
+            pmax.x=vertexs[i].x;
+        }
+        if(pmax.y<vertexs[i].y){
+            pmax.y=vertexs[i].y;
+        }
+        if(pmax.z<vertexs[i].z){
+            pmax.z=vertexs[i].z;
+        }
+    }
+
+
+    capsa.pmin=pmin;
+    capsa.a=pmax.x-pmin.x;
+    capsa.h=pmax.y-pmin.y;
+    capsa.p=pmax.z-pmin.z;
 
     return capsa;
 }
@@ -79,6 +112,8 @@ void Objecte::aplicaTGPoints(mat4 m)
 void Objecte::aplicaTGCentrat(mat4 m)
 {
     // Metode a implementar
+    aplicaTGPoints(m);
+    aplicaTG(m);
 
 }
 

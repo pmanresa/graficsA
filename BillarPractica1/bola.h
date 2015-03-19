@@ -14,6 +14,7 @@ class Bola: public Objecte
 {
 public:
     Bola();
+    Bola(float x, float y);
     ~Bola();
     void make();
 
@@ -27,7 +28,7 @@ private:
 
     static const int NumVerticesF = 2000000;
 
-    int NumMaxIteracions = 6;
+    int NumMaxIteracions = 4;
 
     point4 v[4]; // 4 vertexs de la Bola (tetraedre inicial)
     color4 vertex_colors[4]; // 4 colors RGBA associats a cada vertex

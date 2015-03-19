@@ -33,7 +33,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = BillarPractica11.0.0
-DISTDIR = /home/dcamache7.alumnes/graficsA/BillarPractica1/.tmp/BillarPractica11.0.0
+DISTDIR = /home/pmanreri7.alumnes/graficsA/BillarPractica1/.tmp/BillarPractica11.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/opt/Qt/5.4/gcc_64 -Wl,-rpath,/opt/Qt/5.4/gcc_64/lib
 LIBS          = $(SUBLIBS) -L/opt/Qt/5.4/gcc_64/lib -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
@@ -59,7 +59,8 @@ SOURCES       = ../BillarPractica1/main.cpp \
 		../BillarPractica1/readfile.cpp \
 		../BillarPractica1/plabase.cpp \
 		../BillarPractica1/cub.cpp \
-		../BillarPractica1/bola.cpp qrc_resources.cpp \
+		../BillarPractica1/bola.cpp \
+		../BillarPractica1/conjuntboles.cpp qrc_resources.cpp \
 		moc_mainwindow.cpp \
 		moc_glwidget.cpp \
 		moc_objecte.cpp
@@ -75,6 +76,7 @@ OBJECTS       = main.o \
 		plabase.o \
 		cub.o \
 		bola.o \
+		conjuntboles.o \
 		qrc_resources.o \
 		moc_mainwindow.o \
 		moc_glwidget.o \
@@ -208,7 +210,8 @@ DIST          = /opt/Qt/5.4/gcc_64/mkspecs/features/spec_pre.prf \
 		../BillarPractica1/readfile.h \
 		../BillarPractica1/plabase.h \
 		../BillarPractica1/cub.h \
-		../BillarPractica1/bola.h ../BillarPractica1/main.cpp \
+		../BillarPractica1/bola.h \
+		../BillarPractica1/conjuntboles.h ../BillarPractica1/main.cpp \
 		../BillarPractica1/mainwindow.cpp \
 		../BillarPractica1/glwidget.cpp \
 		../BillarPractica1/Common.cpp \
@@ -219,7 +222,8 @@ DIST          = /opt/Qt/5.4/gcc_64/mkspecs/features/spec_pre.prf \
 		../BillarPractica1/readfile.cpp \
 		../BillarPractica1/plabase.cpp \
 		../BillarPractica1/cub.cpp \
-		../BillarPractica1/bola.cpp
+		../BillarPractica1/bola.cpp \
+		../BillarPractica1/conjuntboles.cpp
 QMAKE_TARGET  = BillarPractica1
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = BillarPractica1
@@ -512,8 +516,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../BillarPractica1/resources.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents ../BillarPractica1/mainwindow.h ../BillarPractica1/vec.h ../BillarPractica1/mat.h ../BillarPractica1/glwidget.h ../BillarPractica1/Common.h ../BillarPractica1/escena.h ../BillarPractica1/objecte.h ../BillarPractica1/taulabillar.h ../BillarPractica1/cara.h ../BillarPractica1/readfile.h ../BillarPractica1/plabase.h ../BillarPractica1/cub.h ../BillarPractica1/bola.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../BillarPractica1/main.cpp ../BillarPractica1/mainwindow.cpp ../BillarPractica1/glwidget.cpp ../BillarPractica1/Common.cpp ../BillarPractica1/escena.cpp ../BillarPractica1/objecte.cpp ../BillarPractica1/taulabillar.cpp ../BillarPractica1/cara.cpp ../BillarPractica1/readfile.cpp ../BillarPractica1/plabase.cpp ../BillarPractica1/cub.cpp ../BillarPractica1/bola.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../BillarPractica1/mainwindow.h ../BillarPractica1/vec.h ../BillarPractica1/mat.h ../BillarPractica1/glwidget.h ../BillarPractica1/Common.h ../BillarPractica1/escena.h ../BillarPractica1/objecte.h ../BillarPractica1/taulabillar.h ../BillarPractica1/cara.h ../BillarPractica1/readfile.h ../BillarPractica1/plabase.h ../BillarPractica1/cub.h ../BillarPractica1/bola.h ../BillarPractica1/conjuntboles.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../BillarPractica1/main.cpp ../BillarPractica1/mainwindow.cpp ../BillarPractica1/glwidget.cpp ../BillarPractica1/Common.cpp ../BillarPractica1/escena.cpp ../BillarPractica1/objecte.cpp ../BillarPractica1/taulabillar.cpp ../BillarPractica1/cara.cpp ../BillarPractica1/readfile.cpp ../BillarPractica1/plabase.cpp ../BillarPractica1/cub.cpp ../BillarPractica1/bola.cpp ../BillarPractica1/conjuntboles.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../BillarPractica1/mainwindow.ui $(DISTDIR)/
 
 
@@ -703,6 +707,7 @@ moc_mainwindow.cpp: /opt/Qt/5.4/gcc_64/include/QtWidgets/QMainWindow \
 		/opt/Qt/5.4/gcc_64/include/QtGui/QOpenGLTexture \
 		/opt/Qt/5.4/gcc_64/include/QtGui/qopengltexture.h \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QScopedPointer \
+		../BillarPractica1/bola.h \
 		/opt/Qt/5.4/gcc_64/include/QtWidgets/QtWidgets \
 		/opt/Qt/5.4/gcc_64/include/QtWidgets/QtWidgetsDepends \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QtCore \
@@ -1034,7 +1039,7 @@ moc_mainwindow.cpp: /opt/Qt/5.4/gcc_64/include/QtWidgets/QMainWindow \
 		/opt/Qt/5.4/gcc_64/include/QtOpenGL/QGLWidget \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QTime \
 		../BillarPractica1/mainwindow.h
-	/opt/Qt/5.4/gcc_64/bin/moc $(DEFINES) -I/opt/Qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/dcamache7.alumnes/graficsA/BillarPractica1 -I/opt/Qt/5.4/gcc_64/include -I/opt/Qt/5.4/gcc_64/include/QtOpenGL -I/opt/Qt/5.4/gcc_64/include/QtWidgets -I/opt/Qt/5.4/gcc_64/include/QtGui -I/opt/Qt/5.4/gcc_64/include/QtCore -I. ../BillarPractica1/mainwindow.h -o moc_mainwindow.cpp
+	/opt/Qt/5.4/gcc_64/bin/moc $(DEFINES) -I/opt/Qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/pmanreri7.alumnes/graficsA/BillarPractica1 -I/opt/Qt/5.4/gcc_64/include -I/opt/Qt/5.4/gcc_64/include/QtOpenGL -I/opt/Qt/5.4/gcc_64/include/QtWidgets -I/opt/Qt/5.4/gcc_64/include/QtGui -I/opt/Qt/5.4/gcc_64/include/QtCore -I. ../BillarPractica1/mainwindow.h -o moc_mainwindow.cpp
 
 moc_glwidget.cpp: ../BillarPractica1/escena.h \
 		../BillarPractica1/Common.h \
@@ -1169,6 +1174,7 @@ moc_glwidget.cpp: ../BillarPractica1/escena.h \
 		/opt/Qt/5.4/gcc_64/include/QtGui/QOpenGLTexture \
 		/opt/Qt/5.4/gcc_64/include/QtGui/qopengltexture.h \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QScopedPointer \
+		../BillarPractica1/bola.h \
 		/opt/Qt/5.4/gcc_64/include/QtWidgets/QtWidgets \
 		/opt/Qt/5.4/gcc_64/include/QtWidgets/QtWidgetsDepends \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QtCore \
@@ -1503,7 +1509,7 @@ moc_glwidget.cpp: ../BillarPractica1/escena.h \
 		/opt/Qt/5.4/gcc_64/include/QtOpenGL/QGLWidget \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QTime \
 		../BillarPractica1/glwidget.h
-	/opt/Qt/5.4/gcc_64/bin/moc $(DEFINES) -I/opt/Qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/dcamache7.alumnes/graficsA/BillarPractica1 -I/opt/Qt/5.4/gcc_64/include -I/opt/Qt/5.4/gcc_64/include/QtOpenGL -I/opt/Qt/5.4/gcc_64/include/QtWidgets -I/opt/Qt/5.4/gcc_64/include/QtGui -I/opt/Qt/5.4/gcc_64/include/QtCore -I. ../BillarPractica1/glwidget.h -o moc_glwidget.cpp
+	/opt/Qt/5.4/gcc_64/bin/moc $(DEFINES) -I/opt/Qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/pmanreri7.alumnes/graficsA/BillarPractica1 -I/opt/Qt/5.4/gcc_64/include -I/opt/Qt/5.4/gcc_64/include/QtOpenGL -I/opt/Qt/5.4/gcc_64/include/QtWidgets -I/opt/Qt/5.4/gcc_64/include/QtGui -I/opt/Qt/5.4/gcc_64/include/QtCore -I. ../BillarPractica1/glwidget.h -o moc_glwidget.cpp
 
 moc_objecte.cpp: /opt/Qt/5.4/gcc_64/include/QtCore/QObject \
 		/opt/Qt/5.4/gcc_64/include/QtCore/qobject.h \
@@ -1632,7 +1638,7 @@ moc_objecte.cpp: /opt/Qt/5.4/gcc_64/include/QtCore/QObject \
 		/opt/Qt/5.4/gcc_64/include/QtGui/qquaternion.h \
 		/opt/Qt/5.4/gcc_64/include/QtGui/qgenericmatrix.h \
 		../BillarPractica1/objecte.h
-	/opt/Qt/5.4/gcc_64/bin/moc $(DEFINES) -I/opt/Qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/dcamache7.alumnes/graficsA/BillarPractica1 -I/opt/Qt/5.4/gcc_64/include -I/opt/Qt/5.4/gcc_64/include/QtOpenGL -I/opt/Qt/5.4/gcc_64/include/QtWidgets -I/opt/Qt/5.4/gcc_64/include/QtGui -I/opt/Qt/5.4/gcc_64/include/QtCore -I. ../BillarPractica1/objecte.h -o moc_objecte.cpp
+	/opt/Qt/5.4/gcc_64/bin/moc $(DEFINES) -I/opt/Qt/5.4/gcc_64/mkspecs/linux-g++ -I/home/pmanreri7.alumnes/graficsA/BillarPractica1 -I/opt/Qt/5.4/gcc_64/include -I/opt/Qt/5.4/gcc_64/include/QtOpenGL -I/opt/Qt/5.4/gcc_64/include/QtWidgets -I/opt/Qt/5.4/gcc_64/include/QtGui -I/opt/Qt/5.4/gcc_64/include/QtCore -I. ../BillarPractica1/objecte.h -o moc_objecte.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -1798,6 +1804,7 @@ main.o: ../BillarPractica1/main.cpp /opt/Qt/5.4/gcc_64/include/QtWidgets/QApplic
 		/opt/Qt/5.4/gcc_64/include/QtGui/QOpenGLTexture \
 		/opt/Qt/5.4/gcc_64/include/QtGui/qopengltexture.h \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QScopedPointer \
+		../BillarPractica1/bola.h \
 		/opt/Qt/5.4/gcc_64/include/QtWidgets/QtWidgets \
 		/opt/Qt/5.4/gcc_64/include/QtWidgets/QtWidgetsDepends \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QtCore \
@@ -2599,6 +2606,7 @@ mainwindow.o: ../BillarPractica1/mainwindow.cpp /opt/Qt/5.4/gcc_64/include/QtWid
 		../BillarPractica1/taulabillar.h \
 		../BillarPractica1/plabase.h \
 		/opt/Qt/5.4/gcc_64/include/QtGui/QOpenGLTexture \
+		../BillarPractica1/bola.h \
 		/opt/Qt/5.4/gcc_64/include/QtOpenGL/QGLWidget \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QTime \
 		../BillarPractica1/mainwindow.h
@@ -2738,6 +2746,7 @@ glwidget.o: ../BillarPractica1/glwidget.cpp ../BillarPractica1/glwidget.h \
 		/opt/Qt/5.4/gcc_64/include/QtGui/QOpenGLTexture \
 		/opt/Qt/5.4/gcc_64/include/QtGui/qopengltexture.h \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QScopedPointer \
+		../BillarPractica1/bola.h \
 		/opt/Qt/5.4/gcc_64/include/QtWidgets/QtWidgets \
 		/opt/Qt/5.4/gcc_64/include/QtWidgets/QtWidgetsDepends \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QtCore \
@@ -3211,7 +3220,8 @@ escena.o: ../BillarPractica1/escena.cpp ../BillarPractica1/escena.h \
 		../BillarPractica1/plabase.h \
 		/opt/Qt/5.4/gcc_64/include/QtGui/QOpenGLTexture \
 		/opt/Qt/5.4/gcc_64/include/QtGui/qopengltexture.h \
-		/opt/Qt/5.4/gcc_64/include/QtCore/QScopedPointer
+		/opt/Qt/5.4/gcc_64/include/QtCore/QScopedPointer \
+		../BillarPractica1/bola.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o escena.o ../BillarPractica1/escena.cpp
 
 objecte.o: ../BillarPractica1/objecte.cpp ../BillarPractica1/objecte.h \
@@ -3917,6 +3927,9 @@ bola.o: ../BillarPractica1/bola.cpp ../BillarPractica1/bola.h \
 		/opt/Qt/5.4/gcc_64/include/QtCore/QObject \
 		../BillarPractica1/cara.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o bola.o ../BillarPractica1/bola.cpp
+
+conjuntboles.o: ../BillarPractica1/conjuntboles.cpp ../BillarPractica1/conjuntboles.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o conjuntboles.o ../BillarPractica1/conjuntboles.cpp
 
 qrc_resources.o: qrc_resources.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_resources.o qrc_resources.cpp

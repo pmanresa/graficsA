@@ -5,11 +5,12 @@ Bola::Bola() : Objecte(NumVerticesF)
 
     std::cout<<"Estic en el constructor del Bola\n";
     // Bola centrat al 0,0,0 amb dimensió 1 a totes les seves arestes
-    xorig = 0; yorig = 0; zorig = 0;
+    xorig = 0; yorig = 10; zorig = 0;
 
-    a = 1;
-    h = 1;
-    p = 1;
+    capsa.a = 1;
+    capsa.h = 1;
+    capsa.p = 1;
+
 
     // Vertices of a unit Bola centered at origin, sides aligned with axes
     v[0] = point4( 0.0, 0.0, 1.0, 1.0  );
@@ -19,16 +20,45 @@ Bola::Bola() : Objecte(NumVerticesF)
 
 
     // RGBA colors
-    vertex_colors[0] =    color4( 0.0, 0.0, 1.0, 1.0 );  // black
-    vertex_colors[1] =    color4( 1.0, 0.0, 0.0, 1.0 );  // red
-    vertex_colors[2] =    color4( 1.0, 1.0, 0.0, 1.0 );  // yellow
-    vertex_colors[3] =    color4( 0.0, 1.0, 0.0, 1.0 );  // green
+    vertex_colors[0] =    color4( 1.0, 1.0, 1.0, 1.0 );  // black
+    vertex_colors[1] =    color4( 1.0, 1.0, 1.0, 1.0 );  // red
+    vertex_colors[2] =    color4( 1.0, 1.0, 1.0, 1.0 );  // yellow
+    vertex_colors[3] =    color4( 1.0, 1.0, 1.0, 1.0 );  // green
+
 
     make();
 
 }
 
+Bola::Bola(float x, float y) : Objecte(NumVerticesF)
+{
 
+    std::cout<<"Estic en el constructor del Bola\n";
+    // Bola centrat al 0,0,0 amb dimensió 1 a totes les seves arestes
+    xorig = x; yorig = y; zorig = 0;
+
+    capsa.a = 1;
+    capsa.h = 1;
+    capsa.p = 1;
+
+
+    // Vertices of a unit Bola centered at origin, sides aligned with axes
+    v[0] = point4( 0.0, 0.0, 1.0, 1.0  );
+    v[1] = point4(  0.0, 0.942809, -0.333333, 1.0  );
+    v[2] = point4(  -0.816497, -0.471405, -0.333333, 1.0  );
+    v[3] = point4(  0.816497, -0.471405, -0.333333, 1.0 );
+
+
+    // RGBA colors
+    vertex_colors[0] =    color4( 1.0, 1.0, 1.0, 1.0 );  // black
+    vertex_colors[1] =    color4( 1.0, 1.0, 1.0, 1.0 );  // red
+    vertex_colors[2] =    color4( 1.0, 1.0, 1.0, 1.0 );  // yellow
+    vertex_colors[3] =    color4( 1.0, 1.0, 1.0, 1.0 );  // green
+
+
+    make();
+
+}
 
 // Destructora
 Bola::~Bola()
@@ -74,7 +104,11 @@ void Bola::make()
     divide_triangle(v[0], v[3], v[1], 0);
     divide_triangle(v[0], v[2], v[3], 0);
 
-    qDebug() << "Iaaaaaaaaaaaaaaaaa";
+    // Matriu translacio
+    mat4 trans = Translate(xorig, yorig, zorig);
+    mat4 escalat = Scale(capsa.a,capsa.h,capsa.p);
+    aplicaTG(trans*escalat);
+
     //initTextura();
 
 }

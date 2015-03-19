@@ -6,8 +6,11 @@ PlaBase::PlaBase() : Objecte(NumVerticesF)
     std::cout<<"Estic en el constructor del PlaBase\n";
     // PlaBase centrat al 0,0,0 amb dimensió 1 a totes les seves arestes
     xorig = 0; yorig = 0; zorig = 0;
-    a = 1.0;
-    h = 1.0;
+    capsa.a = 15;
+    capsa.h = 25;
+    capsa.p = 1;
+
+
 
 
     // Vertices of a unit PlaBasee centered at origin, sides aligned with axes
@@ -19,10 +22,11 @@ PlaBase::PlaBase() : Objecte(NumVerticesF)
 
 
     // RGBA colors
-    vertex_colors[0] =    color4( 0.0, 0.0, 0.0, 1.0 );  // black
-    vertex_colors[1] =    color4( 1.0, 0.0, 0.0, 1.0 );  // red
-    vertex_colors[2] =    color4( 1.0, 1.0, 0.0, 1.0 );  // yellow
-    vertex_colors[3] =    color4( 0.0, 1.0, 0.0, 1.0 );  // green
+    vertex_colors[0] =    color4( 1.0, 1.0, 1.0, 1.0 );  // black
+    vertex_colors[1] =    color4( 1.0, 1.0, 1.0, 1.0 );  // red
+    vertex_colors[2] =    color4( 1.0, 1.0, 1.0, 1.0 );  // yellow
+    vertex_colors[3] =    color4( 1.0, 1.0, 1.0, 1.0 );  // green
+
 
 
     make();
@@ -81,6 +85,11 @@ void PlaBase::make()
     Index = 0;
     quad( 1, 0, 3, 2 );
 
+    // Matriu translacio
+    mat4 trans = Translate(xorig, yorig, zorig);
+    mat4 escala = Scale(capsa.a,capsa.h,capsa.p);
+
+    aplicaTG(trans*escala);
 
 
 

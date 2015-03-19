@@ -231,15 +231,23 @@ void GLWidget::keyReleaseEvent(QKeyEvent *event)
 void GLWidget::adaptaObjecteTamanyWidget(Objecte *obj)
 {
    // Metode a implementar
-    mat4 escalat;
-    mat4 translacio;
-    mat4 rotacio;
+    // Moure al centre
+    //mat4 mouCentre = Translate(-(obj->xorig+a/2.),-(obj->yorig+h/2.),-(obj->zorig+p/2.));
 
-    escalat = Scale(obj->a/20, obj->h/20, obj->p/20 );
-    translacio = Translate(obj->xorig/20, obj->yorig/20, obj->zorig/20 );
-    //rotacio = RotateX(obj->xRot)*RotateY(obj->yRot)*RotateZ(obj->zRot);
 
-    obj->aplicaTG(identity()*escalat*translacio*rotacio);
+
+    // Escalat
+    float tamany = a;
+
+    if(tamany<obj->capsa.h){
+       tamany = h;
+    }
+    if(tamany<obj->capsa.p){
+       tamany = p;
+    }
+    mat4 escala = Scale (1./tamany, 1./tamany, 1./tamany);
+
+    obj->aplicaTG(escala);
 
 }
 
