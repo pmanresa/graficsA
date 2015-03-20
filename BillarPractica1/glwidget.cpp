@@ -161,6 +161,11 @@ void GLWidget::paintGL()
        esc->bola->aplicaTGCentrat(transform);
        esc->draw();
    }
+
+   if (esc->conjuntBoles!=NULL) {
+       esc->conjuntBoles->aplicaTGCentrat(transform);
+       esc->draw();
+   }
 }
 
 
@@ -231,12 +236,18 @@ void GLWidget::keyReleaseEvent(QKeyEvent *event)
 void GLWidget::adaptaObjecteTamanyWidget(Objecte *obj)
 {
    // Metode a implementar
-    // Moure al centre
-    //mat4 mouCentre = Translate(-(obj->xorig+a/2.),-(obj->yorig+h/2.),-(obj->zorig+p/2.));
 
+    //Translacio
+
+    mat4 trans = Translate(obj->xorig, obj->yorig, obj->zorig);
 
 
     // Escalat
+    mat4 escalat = Scale(obj->capsa.a,obj->capsa.h,obj->capsa.p);
+    obj->aplicaTG(escalat*trans);
+
+
+    // Escalat relatiu per encaixarlo dintre de la finestra
     float tamany = a;
 
     if(tamany<obj->capsa.h){
@@ -245,9 +256,10 @@ void GLWidget::adaptaObjecteTamanyWidget(Objecte *obj)
     if(tamany<obj->capsa.p){
        tamany = p;
     }
-    mat4 escala = Scale (1./tamany, 1./tamany, 1./tamany);
 
-    obj->aplicaTG(escala);
+    escalat = Scale (1./tamany, 1./tamany, 1./tamany);
+
+    obj->aplicaTG(escalat);
 
 }
 
@@ -285,15 +297,27 @@ void GLWidget::newBola()
     // Metode que crea la Bola blanca de joc
     Bola *obj;
 
-    obj = new Bola();
+    obj = new Bola(5,5);
     newObjecte(obj);
 }
 
 void GLWidget::newConjuntBoles()
 {
     // Metode que crea les 15 Boles del billar america
-    // Metode a implementar
+    ConjuntBoles *obj;
 
+    obj = new ConjuntBoles();
+    for (int i = 0; i< maxboles; i++){
+        newObjecte(obj->boles[i]);
+    }
+
+/*
+    for (int i = 0; i<3; i++) {
+        Bola *obj;
+        obj = new Bola();
+        newObjecte(obj);
+    }
+*/
 }
 
 void GLWidget::newSalaBillar()

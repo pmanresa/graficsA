@@ -24,11 +24,6 @@ protected:
     vector<Cara> cares; // cares de l'objecte
     vector<point4> vertexs; // vertexs de l'objecte sense repetits
 
-    // Sistema de coordenades d'un objecte: punt origen i eixos de rotació
-    GLfloat xorig, yorig, zorig;
-    float xRot;
-    float yRot;
-    float zRot;
 
     GLfloat tam; // Escala de l'objecte aplicada al fitxer d'entrada
 
@@ -45,6 +40,12 @@ protected:
 
 
 public:
+    // Sistema de coordenades d'un objecte: punt origen i eixos de rotació
+    GLfloat xorig, yorig, zorig;
+    float xRot;
+    float yRot;
+    float zRot;
+
 
   // Capsa mínima contenidora de l'objecte
     Capsa3D capsa;

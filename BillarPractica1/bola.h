@@ -14,7 +14,7 @@ class Bola: public Objecte
 {
 public:
     Bola();
-    Bola(float x, float y);
+    Bola(GLfloat x, GLfloat y);
     ~Bola();
     void make();
 

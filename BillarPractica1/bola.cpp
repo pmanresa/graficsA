@@ -30,7 +30,7 @@ Bola::Bola() : Objecte(NumVerticesF)
 
 }
 
-Bola::Bola(float x, float y) : Objecte(NumVerticesF)
+Bola::Bola(GLfloat x, GLfloat y) : Objecte(NumVerticesF)
 {
 
     std::cout<<"Estic en el constructor del Bola\n";
@@ -104,11 +104,11 @@ void Bola::make()
     divide_triangle(v[0], v[3], v[1], 0);
     divide_triangle(v[0], v[2], v[3], 0);
 
-    // Matriu translacio
-    mat4 trans = Translate(xorig, yorig, zorig);
+    // Translacio + Escalat
+    /*mat4 trans = Translate(xorig, yorig, zorig);
     mat4 escalat = Scale(capsa.a,capsa.h,capsa.p);
     aplicaTG(trans*escalat);
-
+*/
     //initTextura();
 
 }
@@ -170,10 +170,6 @@ void Bola::initTextura()
      texture->bind(0);
 
  }
-
-
-
-
 
 
 

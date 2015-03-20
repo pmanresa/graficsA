@@ -56,9 +56,9 @@ void Escena::aplicaTG(mat4 m) {
         bola->aplicaTG(m);
 
 
-   /* if (conjuntBoles!=NULL)
+    if (conjuntBoles!=NULL)
         conjuntBoles->aplicaTG(m);
-*/
+
 }
 
 void Escena::aplicaTGCentrat(mat4 m) {
@@ -74,9 +74,9 @@ void Escena::aplicaTGCentrat(mat4 m) {
     if (bola!=NULL)
         bola->aplicaTGCentrat(m);
 
-    /*if (conjuntBoles!=NULL)
+    if (conjuntBoles!=NULL)
         conjuntBoles->aplicaTGCentrat(m);
-*/
+
 
 }
 

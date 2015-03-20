@@ -2,22 +2,32 @@
 #define CONJUNTBOLES_H
 
 #include <stdio.h>
-#include <objecte.h>
 #include <bola.h>
+#include <objecte.h>
 
+#define maxboles 5
 
-class ConjuntBoles
+class ConjuntBoles: public Objecte
+
 {
 private:
-    Bola* boles;
+
+
 
 public:
     ConjuntBoles();
     ~ConjuntBoles();
 
+    static const int NumVerticesF = 20000000;
 
-    void make();
-    void draw();
+    virtual void make();
+    virtual void toGPU(QGLShaderProgram *p);
+    virtual void draw();
+    virtual void aplicaTG(mat4 m);
+    virtual void aplicaTGPoints(mat4 m);
+    virtual void aplicaTGCentrat(mat4 m);
+
+    Bola* boles[maxboles];
 
 
 
