@@ -271,6 +271,7 @@ void GLWidget::newObjecte(Objecte * obj)
 
     updateGL();
 }
+
 void GLWidget::newPlaBase()
 {
     // Metode que crea un objecte PlaBase poligon amb el punt central al (0,0,0) i perpendicular a Y=0
@@ -307,9 +308,11 @@ void GLWidget::newConjuntBoles()
     ConjuntBoles *obj;
 
     obj = new ConjuntBoles();
-    for (int i = 0; i< maxboles; i++){
+    newObjecte(obj);
+
+    /*for (int i = 0; i< maxboles; i++){
         newObjecte(obj->boles[i]);
-    }
+    }*/
 
 /*
     for (int i = 0; i<3; i++) {

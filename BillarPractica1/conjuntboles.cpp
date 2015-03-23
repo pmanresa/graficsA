@@ -3,6 +3,8 @@
 
 ConjuntBoles::ConjuntBoles(): Objecte(NumVerticesF)
 {
+    xorig=0;yorig=0;zorig=0;
+    capsa.a=1;capsa.h=1;capsa.p=1;
 
     for (int i = 0; i< maxboles; i++){
         Bola *bola;
@@ -10,15 +12,12 @@ ConjuntBoles::ConjuntBoles(): Objecte(NumVerticesF)
         boles[i] = bola;
     }
 
-
-
 }
 
 void ConjuntBoles::make(){
     for (int i = 0; i< maxboles; i++){
        boles[i]->make();
     }
-
 }
 
 void ConjuntBoles::draw()
@@ -53,7 +52,7 @@ void ConjuntBoles::toGPU(QGLShaderProgram *p){
 
 ConjuntBoles::~ConjuntBoles()
 {
-    delete boles;
+    //delete boles;
 
 }
 

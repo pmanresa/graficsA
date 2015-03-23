@@ -23,6 +23,7 @@ class PlaBase: public Objecte
       ~PlaBase();
       void make();
       void toGPU(QGLShaderProgram *program);
+      void draw();
 
   private:
 

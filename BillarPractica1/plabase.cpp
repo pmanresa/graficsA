@@ -113,50 +113,17 @@ void PlaBase::initTextura()
      texture->bind(0);
 
  }
+void PlaBase::toGPU(QGLShaderProgram *pr){
 
+    program = pr;
 
-void PlaBase::toGPU(QGLShaderProgram *program){
+    std::cout<<"Passo les dades de l'objecte a la GPU\n";
 
-    std::cout<<"Pas de les dades del cub a la GPU\n";
-
-    // S'activa la textura i es passa a la GPU
-    texture->bind(0);
-    program->setUniformValue("texMap", 0);
-
-    // Creacio i inicialitzacio d'un vertex buffer object (VBO)
-    GLuint buffer;
     glGenBuffers( 1, &buffer );
-
-    // Activació a GL del Vertex Buffer Object
     glBindBuffer( GL_ARRAY_BUFFER, buffer );
-
-    // Transferència dels punts, colors i coordenades de textura al vertex buffer object
-    glBufferData( GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors)+sizeof(vertexsTextura),
+    glBufferData( GL_ARRAY_BUFFER,sizeof(vertexsTextura) * Index + sizeof(point4) * Index + sizeof(color4) * Index,
                   NULL, GL_STATIC_DRAW );
-    glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(points), points );
-    glBufferSubData( GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors );
-    glBufferSubData( GL_ARRAY_BUFFER, sizeof(points)+sizeof(colors), sizeof(vertexsTextura), vertexsTextura );
-
-
-    // Definició de la correspondència de les variables del shader vPosition i vColor
-
-    int vertexLocation = program->attributeLocation("vPosition");
-    int colorLocation = program->attributeLocation("vColor");
-    int coordTextureLocation = program->attributeLocation("vCoordTexture");
-    program->enableAttributeArray(vertexLocation);
-    program->setAttributeBuffer("vPosition", GL_FLOAT, 0, 4);
-
-    program->enableAttributeArray(colorLocation);
-    program->setAttributeBuffer("vColor", GL_FLOAT, sizeof(points), 4);
-
-    program->enableAttributeArray(coordTextureLocation);
-    program->setAttributeBuffer("vCoordTexture", GL_FLOAT, sizeof(points)+sizeof(colors), 2);
-
-    // Activació de la correspondencia entre les variables
-    program->bindAttributeLocation("vPosition", vertexLocation);
-    program->bindAttributeLocation("vColor", colorLocation);
-    program->bindAttributeLocation("vCoordTexture", coordTextureLocation);
-
+    program->link();
 
     glEnable( GL_DEPTH_TEST );
     glEnable(GL_TEXTURE_2D);
@@ -164,8 +131,43 @@ void PlaBase::toGPU(QGLShaderProgram *program){
 
 }
 
+// Pintat en la GPU.
+void PlaBase::draw()
+{
+    // S'activa la textura i es passa a la GPU
+    texture->bind(0);
+    program->setUniformValue("texMap", 0);
 
+    // cal activar el buffer de l'objecte. Potser que ja n'hi hagi un altre actiu
+    glBindBuffer( GL_ARRAY_BUFFER, buffer );
 
+    // per si han canviat les coordenades dels punts
+    glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(point4) * Index, &points[0] );
+    glBufferSubData( GL_ARRAY_BUFFER, sizeof(point4) * Index, sizeof(color4) * Index, &colors[0] );
+    glBufferSubData( GL_ARRAY_BUFFER, (sizeof(point4) * Index)+(sizeof(color4)*Index), sizeof(vertexsTextura), &vertexsTextura[0] );
 
+    // Per a conservar el buffer
+    int vertexLocation = program->attributeLocation("vPosition");
+    int colorLocation = program->attributeLocation("vColor");
+    int coordTextureLocation = program->attributeLocation("vCoordTexture");
+
+    program->enableAttributeArray(vertexLocation);
+    program->setAttributeBuffer("vPosition", GL_FLOAT, 0, 4);
+    program->enableAttributeArray(colorLocation);
+    program->setAttributeBuffer("vColor", GL_FLOAT, sizeof(point4) * Index, 4);
+    program->enableAttributeArray(coordTextureLocation);
+    program->setAttributeBuffer("vCoordTexture", GL_FLOAT, (sizeof(point4)*Index)+(sizeof(color4)*Index),4);
+
+    // Activació de la correspondencia entre les variables
+    program->bindAttributeLocation("vPosition", vertexLocation);
+    program->bindAttributeLocation("vColor", colorLocation);
+    program->bindAttributeLocation("vCoordTexture", coordTextureLocation);
+
+    glPolygonMode(GL_FRONT_AND_BACK,
+                  GL_FILL);
+    glDrawArrays( GL_TRIANGLES, 0, Index );
+
+    // Abans nomes es feia: glDrawArrays( GL_TRIANGLES, 0, NumVerticesP );
+}
 
 

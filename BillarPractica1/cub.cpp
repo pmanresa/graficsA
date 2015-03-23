@@ -132,12 +132,11 @@ void cub::toGPU(QGLShaderProgram *program){
     int vertexLocation = program->attributeLocation("vPosition");
     int colorLocation = program->attributeLocation("vColor");
     int coordTextureLocation = program->attributeLocation("vCoordTexture");
+
     program->enableAttributeArray(vertexLocation);
     program->setAttributeBuffer("vPosition", GL_FLOAT, 0, 4);
-
     program->enableAttributeArray(colorLocation);
     program->setAttributeBuffer("vColor", GL_FLOAT, sizeof(points), 4);
-
     program->enableAttributeArray(coordTextureLocation);
     program->setAttributeBuffer("vCoordTexture", GL_FLOAT, sizeof(points)+sizeof(colors), 2);
 

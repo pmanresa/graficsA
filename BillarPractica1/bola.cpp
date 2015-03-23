@@ -162,7 +162,7 @@ void Bola::initTextura()
 
 
      // Carregar la textura
-     glActiveTexture(GL_TEXTURE0);
+     glActiveTexture(GL_TEXTURE1);
      texture = new QOpenGLTexture(QImage("://resources/Bola4.jpg"));
      texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
      texture->setMagnificationFilter(QOpenGLTexture::Linear);

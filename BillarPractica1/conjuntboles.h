@@ -20,12 +20,12 @@ public:
 
     static const int NumVerticesF = 20000000;
 
-    virtual void make();
-    virtual void toGPU(QGLShaderProgram *p);
-    virtual void draw();
-    virtual void aplicaTG(mat4 m);
-    virtual void aplicaTGPoints(mat4 m);
-    virtual void aplicaTGCentrat(mat4 m);
+    void make();
+    void toGPU(QGLShaderProgram *p);
+    void draw();
+    void aplicaTG(mat4 m);
+    void aplicaTGPoints(mat4 m);
+    void aplicaTGCentrat(mat4 m);
 
     Bola* boles[maxboles];
 
