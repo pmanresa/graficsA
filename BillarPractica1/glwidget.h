@@ -75,9 +75,10 @@ private:
     int xRotOld;
     int yRotOld;
     int zRotOld;
-    Capsa3D cb;
-    Capsa3D cT;
-    vector<Capsa3D> listaCapsasConjuntBoles;
+
+    Capsa3D capsaPla;
+    Capsa3D capsaBola;
+    vector<Capsa3D> CapsesBoles;
 
     //  Metode per a carregar de fitxers el vertex i el fragment shader
    void InitShader( const char* vertexShaderFile,
@@ -85,8 +86,6 @@ private:
 
    // Metode per inicialitzar els shaders de l'aplicacio
     void initShadersGPU();
-
-
 
     // Metode que carrega un nou objecte a l'escena
     void newObjecte(Objecte * obj);

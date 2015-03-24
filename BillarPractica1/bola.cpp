@@ -38,10 +38,10 @@ Bola::Bola(GLfloat x, GLfloat y, GLfloat z, GLfloat radio, QString indexbola) : 
     if(capsa.h > aristaMax){
         aristaMax=capsa.h;
     }
-    double escala = 3.5 * radio/aristaMax;
+    double escala = 2 * radio/aristaMax;
 
     mat4 m = Translate(xorig, yorig, zorig)*Scale(escala, escala, escala);
-    aplicaTG(m);//sale la bola con radio r y posicion x0,y0,z0
+    aplicaTG(m);
     capsa = calculCapsa3D();
 
 }
