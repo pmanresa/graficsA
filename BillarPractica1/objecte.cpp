@@ -41,41 +41,28 @@ Capsa3D Objecte::calculCapsa3D()
 {
 
     // Metode a implementar: calcula la capsa mínima contenidora d'un objecte
+    int i;
     vec3    pmin, pmax;
-    pmin.x = vertexs[0].x;
-    pmin.y = vertexs[0].y;
-    pmin.z = vertexs[0].z;
-    pmax.x = vertexs[0].x;
-    pmax.y = vertexs[0].y;
-    pmax.z = vertexs[0].z;
 
-    //recorrem els vertex
-    for(int i=0;i<vertexs.size();i++){
-        if(pmin.x>vertexs[i].x){
-            pmin.x=vertexs[i].x;
-        }
-        if(pmin.y>vertexs[i].y){
-            pmin.y=vertexs[i].y;
-        }
-        if(pmin.z>vertexs[i].z){
-            pmin.z=vertexs[i].z;
-        }
+    pmin.x = points[0].x;
+    pmin.y = points[0].y;
+    pmin.z = points[0].z;
+    pmax = pmin;
 
-        if(pmax.x<vertexs[i].x){
-            pmax.x=vertexs[i].x;
-        }
-        if(pmax.y<vertexs[i].y){
-            pmax.y=vertexs[i].y;
-        }
-        if(pmax.z<vertexs[i].z){
-            pmax.z=vertexs[i].z;
-        }
+    for (i=1; i<numPoints; i++){
+        if(points[i].x < pmin[0]) pmin[0] = points[i].x;//calculo punto minimo
+        if(points[i].y < pmin[1]) pmin[1] = points[i].y;
+        if(points[i].z < pmin[2]) pmin[2] = points[i].z;
+
+        if(points[i].x > pmax[0]) pmax[0] = points[i].x;//calculo punto maximo
+        if(points[i].y > pmax[1]) pmax[1] = points[i].y;
+        if(points[i].z > pmax[2]) pmax[2] = points[i].z;
     }
 
-    capsa.pmin=pmin;
-    capsa.a=pmax.x-pmin.x;
-    capsa.h=pmax.y-pmin.y;
-    capsa.p=pmax.z-pmin.z;
+    capsa.pmin = pmin;
+    capsa.a = pmax[0]-pmin[0];//anchura
+    capsa.h = pmax[1]-pmin[1];//altura
+    capsa.p = pmax[2]-pmin[2];//profundidad
 
     return capsa;
 }
@@ -114,9 +101,21 @@ void Objecte::aplicaTGCentrat(mat4 m)
 {
     // Metode a implementar
 
-    aplicaTGPoints(m);
-    aplicaTG(m);
+    // Calculam centre de la capsa
+    capsa = calculCapsa3D();
+    GLfloat xT = capsa.pmin.x + capsa.a/2;
+    GLfloat yT = capsa.pmin.y + capsa.h/2.;
+    GLfloat zT = capsa.pmin.z + capsa.p/2.;
 
+    // Traslació a l'origen
+    mat4 trasOrigen = Translate(-xT, -yT, -zT);
+    // Traslacio a posicio original
+    mat4 trasOriginal = Translate(xT, yT, zT);
+
+    mat4 transform = trasOriginal*m*trasOrigen;
+
+    aplicaTG(transform);
+    capsa = calculCapsa3D();
 }
 
 /*
@@ -150,8 +149,10 @@ void Objecte::toGPU(QGLShaderProgram *pr){
 
     program->enableAttributeArray(vertexLocation);
     program->setAttributeBuffer("vPosition", GL_FLOAT, 0, 4);
+
     program->enableAttributeArray(colorLocation);
     program->setAttributeBuffer("vColor", GL_FLOAT, sizeof(point4)*Index, 4);
+
     program->enableAttributeArray(coordTextureLocation);
     program->setAttributeBuffer("vCoordTexture", GL_FLOAT, sizeof(point4)*Index+sizeof(color4)*Index, 2);
 
@@ -162,6 +163,7 @@ void Objecte::toGPU(QGLShaderProgram *pr){
 
     glEnable( GL_DEPTH_TEST );
     glEnable( GL_TEXTURE_2D );
+    glEnable(GL_CULL_FACE); //Eliminam triangles que es veuen per darrera
 
     program->link();
     program->bind();

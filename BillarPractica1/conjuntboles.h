@@ -7,12 +7,9 @@
 
 #define maxboles 5
 
-class ConjuntBoles: public Objecte
+class ConjuntBoles
 
 {
-private:
-
-
 
 public:
     ConjuntBoles();

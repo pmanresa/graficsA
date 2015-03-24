@@ -41,7 +41,7 @@ GLWidget::~GLWidget()
 // Create a GLSL program object from vertex and fragment shader files
 void
 GLWidget::InitShader(const char* vShaderFile, const char* fShaderFile)
-{           
+{
 
     QGLShader *vshader = new QGLShader(QGLShader::Vertex, this);
     QGLShader *fshader = new QGLShader(QGLShader::Fragment, this);
@@ -56,6 +56,8 @@ GLWidget::InitShader(const char* vShaderFile, const char* fShaderFile)
 
     program->bindAttributeLocation("vPosition", PROGRAM_VERTEX_ATTRIBUTE);
     program->bindAttributeLocation("vColor", PROGRAM_COLOR_ATTRIBUTE);
+
+
     // muntatge del shader en el pipeline gràfic per a ser usat
     program->link();
 
@@ -127,10 +129,10 @@ void GLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    std::cout<<"Estic inicialitzant el shaders"<<std::ends;
+    std::cout<<"Estic inicialitzant el shaders"<<std::endl;
     initShadersGPU();
 
-    glClearColor(clearColor.redF(), clearColor.greenF(), clearColor.blueF(), clearColor.alphaF());
+    //glClearColor(clearColor.redF(), clearColor.greenF(), clearColor.blueF(), clearColor.alphaF());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 }
@@ -148,24 +150,19 @@ void GLWidget::paintGL()
                        RotateZ( zRot / 16.0 ) );
 
    // A modificar si cal girar tots els objectes
-   if (esc->taulaBillar!=NULL) {
-       esc->taulaBillar->aplicaTGCentrat(transform);
-       esc->draw();
-   }
-   if (esc->plaBase!=NULL) {
-       esc->plaBase->aplicaTGCentrat(transform);
-       esc->draw();
+   if(xRot != xRotOld || yRot != yRotOld || zRot != zRotOld){
+       ejex = transform * ejex;
+       ejez = transform * ejez;
+       esc->aplicaTG(transform);
    }
 
-   if (esc->bola!=NULL) {
-       esc->bola->aplicaTGCentrat(transform);
-       esc->draw();
-   }
+   xRotOld = xRot;
+   yRotOld = yRot;
+   zRotOld = zRot;
 
-   if (esc->conjuntBoles!=NULL) {
-       esc->conjuntBoles->aplicaTGCentrat(transform);
-       esc->draw();
-   }
+   esc->draw(program);
+
+
 }
 
 
@@ -196,10 +193,10 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
     int dy = event->y() - lastPos.y();
 
     if (event->buttons() & Qt::LeftButton) {
-        setXRotation(xRot + 8 * dy);
+        setXRotation(xRot + ROTATIONSPEED * dy);
     } else if (event->buttons() & Qt::RightButton) {
-        setXRotation(xRot + 8 * dy);
-        setZRotation(zRot + 8 * dx);
+        setXRotation(xRot + ROTATIONSPEED * dy);
+        setZRotation(zRot + ROTATIONSPEED * dx);
     }
     lastPos = event->pos();
 }
@@ -208,20 +205,140 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 void GLWidget::keyPressEvent(QKeyEvent *event)
 {
     // Metode a implementar
-    switch ( event->key() )
-    {
-    case Qt::Key_Up:
 
-        break;
-    case Qt::Key_Down:
+    //std::cout<<"\nkeyPressEvent\n";
+    int Key_Left = 0x01000012;
+    int Key_Up = 0x01000013;
+    int Key_Right = 0x01000014;
+    int Key_Down = 0x01000015;
 
-        break;
-    case Qt::Key_Left:
+    /*
+     * Para cada dirección de desplazamiento, calculamos cual va a ser la cantidad de espacio que
+     * se va a desplazar en dicha dirección. Sin embargo, para no estar obligados a tener en cuenta
+     * la rotación de la escena en este punto, los desplazamientos se hacen de manera que están
+     * sobre el plano XZ, sin que haya mediado ninguna transformación de por medio.
+     */
+    double deltaDesplacament = 0.01;
+    double dzP=deltaDesplacament, dzN=-deltaDesplacament, dxP=deltaDesplacament, dxN=-deltaDesplacament;
 
-        break;
-    case Qt::Key_Right:
+    mat4 m;
+    Capsa3D capsaBolaB, capBi;
 
-        break;
+    capsaBolaB = esc->bola->calculCapsa3D();
+
+    /*
+     * Verificación de la posición de la bola dentro de los límite de Escena. La variable cT contiene
+     * la capsa3D con el tamaño de toda la escena, lo cual nos permite calcular si al aplicar un
+     * desplazamiento sobre la bola blanca, ésta se saldrá de los límites que impone cT.
+     */
+    if(cT.pmin.z - cb.pmin.z > - deltaDesplacament)//si bola blanca a distancia <deltaDesplacament ->abs(dzN) < deltaDesplacament en borde de mesa con z negativos
+        dzN = cT.pmin.z - cb.pmin.z;
+    if(cT.pmin.z + cT.p - (cb.pmin.z + cb.p) < deltaDesplacament)//si bola blanca a distancia <deltaDesplacament ->abs(dzP) < deltaDesplacament en borde de mesa con z positivos
+        dzP = cT.pmin.z + cT.p - (cb.pmin.z + cb.p);
+    if(cT.pmin.x - cb.pmin.x > -deltaDesplacament)//si bola blanca a distancia <deltaDesplacament ->abs(dxN) < deltaDesplacament en borde de mesa con x negativos
+        dxN = cT.pmin.x - cb.pmin.x;
+    if(cT.pmin.x + cT.a - (cb.pmin.x + cb.a) < deltaDesplacament)//si bola blanca a distancia <deltaDesplacament ->abs(dxN) < deltaDesplacament en borde de mesa con x positivos
+        dxP = cT.pmin.x + cT.a - (cb.pmin.x + cb.a);
+
+    /*
+     * Para cada bola de ConjuntBoles, calculamos la posible colisión con la bola blanca, para evitar
+     * que la bola blanca atraviese las otras bolas. De producirse, no permitimos que la bola se desplace.
+     */
+    for (int i=0; i<esc->conjuntBoles->boles.size(); i++) {//comparamos bola blanca con resto de bolas
+
+        /*
+         * Para evitar el tener que calcular constantemente la colisión, de las bolas, miramos antes de hacer cualquier
+         * otro cálculo, si la bola está dentro de la capsa3d de la bola con la que va a colisionar
+         */
+        if(abs((cb.pmin.x+cb.a/2.) - (listaCapsasConjuntBoles[i].pmin.x + listaCapsasConjuntBoles[i].a /2.)) < (cb.a/2. + listaCapsasConjuntBoles[i].a/2.)
+                && abs((cb.pmin.z+cb.p/2.) - (listaCapsasConjuntBoles[i].pmin.z+listaCapsasConjuntBoles[i].p/2.)) < cb.p/2. + listaCapsasConjuntBoles[i].p/2.) {
+
+            /*
+             * De ser así, para cada tipo de tecla, miramos que en el eje sobre el que se desplaza la bola blanca (eje z si se desplaza arriba o abajo,
+             * eje x si se desplaza hacia la izquierda o a la derecha) intenta sobrepasar la capsa3d de la bola i.
+             *
+             * De intentar hacer un desplazamiento sobre ese eje, en el caso que esté a menor distancia que la distancia por defecto que se aplica,
+             * se procederá a calcular la distancia que queda entre la bola blanca y la bola i.
+             *
+             * Si se intenta ir más allá en dicha dirección, no será posible.
+             */
+            if(event->key() == Key_Up){
+                if((cb.pmin.z + cb.p/2.0) - (listaCapsasConjuntBoles[i].pmin.z + listaCapsasConjuntBoles[i].p/2.0)<= 0.0){//si bola blanca con menor z que la i hay limitacion
+                    if(listaCapsasConjuntBoles[i].pmin.z - cb.pmin.z - cb.p < deltaDesplacament){//otherwise yes
+                        dzP = listaCapsasConjuntBoles[i].pmin.z - cb.pmin.z - cb.p;
+                        if(dzP < 0.005)dzP = 0.0;
+                    }
+                }else{
+                    dzP = deltaDesplacament;//si bola blanca tiene mayor z que la i no hay limitacion
+                }
+            }
+
+            if(event->key() == Key_Down){
+                if((cb.pmin.z + cb.p/2.0) - (listaCapsasConjuntBoles[i].pmin.z + listaCapsasConjuntBoles[i].p/2.0)>= 0.0){//si bola blanca con mayor z que la i, no hay limitacion
+                    if(listaCapsasConjuntBoles[i].pmin.z + listaCapsasConjuntBoles[i].p - cb.pmin.z > -deltaDesplacament){//otherwise yes
+                         dzN = listaCapsasConjuntBoles[i].pmin.z + listaCapsasConjuntBoles[i].p - cb.pmin.z;
+                         if(dzN > -0.005)dzN = 0.0;
+                    }   else{
+                           dzN = -deltaDesplacament;
+                        }
+                 }
+            }
+
+            if(event->key() == Key_Left){
+                if((cb.pmin.x + cb.a/2.)- (listaCapsasConjuntBoles[i].pmin.x + listaCapsasConjuntBoles[i].a/2.)<= 0.0){//si bola blanca a la izquierda no hay limitacion
+                    dxN = -deltaDesplacament;
+                }else{
+                    if(listaCapsasConjuntBoles[i].pmin.x + listaCapsasConjuntBoles[i].a - cb.pmin.x > -deltaDesplacament){//otherwise yes
+                        dxN = listaCapsasConjuntBoles[i].pmin.x + listaCapsasConjuntBoles[i].a - cb.pmin.x;
+                        if(dxN > -0.002)dxN = 0.0;
+                    }
+                }
+            }
+
+            if(event->key() == Key_Right){
+                if((cb.pmin.x + cb.a/2.)- (listaCapsasConjuntBoles[i].pmin.x + listaCapsasConjuntBoles[i].a/2.) >= 0.0){//si bola blanca a la derecha no hay limitacion
+                    dxP = deltaDesplacament;
+                }else{
+                    if(listaCapsasConjuntBoles[i].pmin.x - (cb.pmin.x + cb.a) < deltaDesplacament ){//otherwise yes
+                        dxP = listaCapsasConjuntBoles[i].pmin.x - (cb.pmin.x + cb.a);
+                        if(dxP < 0.002)dxP = 0.0;
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+     * Una vez ya se han calculado cuales serán los desplazamientos,
+     * aplicamos una translación, pero teniendo en cuenta cómo están
+     * actualmente los ejes de coordenadas.
+     */
+    if (esc->bola!=NULL && esc->plaBase!=NULL ) {
+
+
+       switch ( event->key() )
+       {
+       case Qt::Key_Up:
+                  m = Translate(ejez.x*dzP,  ejez.y*dzP, ejez.z*dzP);
+                  cb.pmin.z += dzP;
+           break;
+       case Qt::Key_Down:
+                  m = Translate(ejez.x*dzN,  ejez.y*dzN, ejez.z*dzN);
+                  cb.pmin.z += dzN;
+           break;
+       case Qt::Key_Left:
+                  m = Translate(ejex.x*dxN,  ejex.y*dxN, ejex.z*dxN);
+                  cb.pmin.x += dxN;
+           break;
+       case Qt::Key_Right:
+                  m = Translate(ejex.x*dxP,  ejex.y*dxP, ejex.z*dxP);
+                  cb.pmin.x += dxP;
+           break;
+       }
+
+       esc->bola->aplicaTG(m);
+       update();
+
     }
 }
 
@@ -235,32 +352,21 @@ void GLWidget::keyReleaseEvent(QKeyEvent *event)
 
 void GLWidget::adaptaObjecteTamanyWidget(Objecte *obj)
 {
-   // Metode a implementar
+    /* Metode a implementar
+    Capsa3D capsa;
+    mat4 m;
 
-    //Translacio
-
-    mat4 trans = Translate(obj->xorig, obj->yorig, obj->zorig);
-
-
-    // Escalat
-    mat4 escalat = Scale(obj->capsa.a,obj->capsa.h,obj->capsa.p);
-    obj->aplicaTG(escalat*trans);
-
-
-    // Escalat relatiu per encaixarlo dintre de la finestra
-    float tamany = a;
-
-    if(tamany<obj->capsa.h){
-       tamany = h;
+    obj->aplicaTG(m220); //m220 precalculada en glwidget.h con escala=2/20
+    capsa = obj->calculCapsa3D();
+        if (dynamic_cast<TaulaBillar*>(obj)){
+            m = Translate(0.0,  -capsa.pmin.y - capsa.h, 0.0);//no es estrictamente necesario
+            obj->aplicaTG(m);
+        }else if (dynamic_cast<Bola*>(obj)){
+            m = Translate(0.0,  -capsa.pmin.y, 0.0);//la base de las 16 bolas quedan en y = 0
+            obj->aplicaTG(m);
     }
-    if(tamany<obj->capsa.p){
-       tamany = p;
-    }
-
-    escalat = Scale (1./tamany, 1./tamany, 1./tamany);
-
-    obj->aplicaTG(escalat);
-
+    //la PlaBase estaba en y = 0 por lo que solo necesita el escalado m220
+    */
 }
 
 void GLWidget::newObjecte(Objecte * obj)
@@ -268,20 +374,14 @@ void GLWidget::newObjecte(Objecte * obj)
     adaptaObjecteTamanyWidget(obj);
     obj->toGPU(program);
     esc->addObjecte(obj);
-
     updateGL();
 }
-
 void GLWidget::newPlaBase()
 {
+    cout << "Creating new pla base" << endl;
     // Metode que crea un objecte PlaBase poligon amb el punt central al (0,0,0) i perpendicular a Y=0
-
-    // Metode a implementar
-    PlaBase *obj;
-
-    obj = new PlaBase();
-    newObjecte(obj);
-
+    PlaBase *plaBase = new PlaBase();
+    newObjecte(plaBase);
 }
 
 void GLWidget::newObj(QString fichero)
@@ -296,36 +396,41 @@ void GLWidget::newObj(QString fichero)
 void GLWidget::newBola()
 {
     // Metode que crea la Bola blanca de joc
+     // Metode a implementar
+
     Bola *obj;
 
-    obj = new Bola(5,5);
+    obj = new Bola(0.0, 0.03075, -0.5, 0.03075, "0");//x0,y0,z0,r,numBola
     newObjecte(obj);
 }
-
 void GLWidget::newConjuntBoles()
 {
     // Metode que crea les 15 Boles del billar america
-    ConjuntBoles *obj;
+    // Metode a implementar
+    ConjuntBoles *conjunt;
 
-    obj = new ConjuntBoles();
-    newObjecte(obj);
+    conjunt = new ConjuntBoles();
 
-    /*for (int i = 0; i< maxboles; i++){
-        newObjecte(obj->boles[i]);
-    }*/
-
-/*
-    for (int i = 0; i<3; i++) {
-        Bola *obj;
-        obj = new Bola();
-        newObjecte(obj);
+    for (int i=0; i<conjunt->boles.size(); i++) {
+        adaptaObjecteTamanyWidget(conjunt->boles[i]);
+        conjunt->boles[i]->toGPU(program);
     }
-*/
-}
 
+    esc->conjuntBoles = conjunt;
+    updateGL();
+}
 void GLWidget::newSalaBillar()
 {
-    // Metode que construeix tota la sala de billar: taula, 15 boles i bola blanca
+    newPlaBase();
+    cT = esc->plaBase->calculCapsa3D();
+
+    newBola();
+    cb = esc->bola->calculCapsa3D();
+
+    newConjuntBoles();
+    for (int i=0; i<esc->conjuntBoles->boles.size(); i++) {
+        listaCapsasConjuntBoles.push_back(esc->conjuntBoles->boles[i]->calculCapsa3D());
+    }
 }
 
 // Metode per iniciar la dinàmica del joc

@@ -25,11 +25,24 @@ Bola::Bola(GLfloat x, GLfloat y, GLfloat z, GLfloat radio, QString indexbola) : 
     zorig = z;
     this->radio = radio;
 
-    capsa.a = 1;
-    capsa.h = 1;
-    capsa.p = 1;
 
     make(indexbola);
+    capsa = calculCapsa3D();
+    double aristaMax = 0.0;
+
+    if(capsa.a > capsa.p){
+        aristaMax=capsa.a;
+    } else{
+        aristaMax=capsa.p;
+    }
+    if(capsa.h > aristaMax){
+        aristaMax=capsa.h;
+    }
+    double escala = 3.5 * radio/aristaMax;
+
+    mat4 m = Translate(xorig, yorig, zorig)*Scale(escala, escala, escala);
+    aplicaTG(m);//sale la bola con radio r y posicion x0,y0,z0
+    capsa = calculCapsa3D();
 
 }
 
@@ -91,7 +104,7 @@ void Bola::make(QString indexbola)
     divide_triangle(v[0], v[3], v[1], 0);
     divide_triangle(v[0], v[2], v[3], 0);
 
-    //initTextura(indexbola);
+    initTextura(indexbola);
 
 }
 

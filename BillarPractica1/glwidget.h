@@ -3,11 +3,14 @@
 
 #include <math.h>
 #include <escena.h>
+#include <bola.h>
+#include <conjuntboles.h>
 
 #include <QtWidgets>
 #include <QGLWidget>
 #include <QTime>
 
+#define ROTATIONSPEED 1
 
 #define PROGRAM_VERTEX_ATTRIBUTE 0
 #define PROGRAM_COLOR_ATTRIBUTE 1
@@ -66,7 +69,15 @@ private:
 
     // Programa de la GPU
     QGLShaderProgram *program;
-
+    mat4 m220 = Scale(1.0/2.0, 1.0/2.0, 1.0/2.0);
+    vec4 ejex =vec4(1.0, 0.0, 0.0, 0.0);
+    vec4 ejez =vec4(0.0, 0.0, 1.0, 0.0);
+    int xRotOld;
+    int yRotOld;
+    int zRotOld;
+    Capsa3D cb;
+    Capsa3D cT;
+    vector<Capsa3D> listaCapsasConjuntBoles;
 
     //  Metode per a carregar de fitxers el vertex i el fragment shader
    void InitShader( const char* vertexShaderFile,

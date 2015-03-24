@@ -14,10 +14,10 @@ class Bola: public Objecte
 {
 public:
     Bola();
-    Bola(GLfloat x, GLfloat y, GLfloat z, double radio, QString indexbola);
+    Bola(GLfloat x, GLfloat y, GLfloat z, GLfloat radio, QString indexbola);
     ~Bola();
-    void make();
-
+    void make(QString indexbola);
+    QOpenGLTexture *texture;
 
 private:
 
@@ -33,7 +33,7 @@ private:
 
     point4 v[4]; // 4 vertexs de la Bola (tetraedre inicial)
     color4 vertex_colors[4]; // 4 colors RGBA associats a cada vertex
-    QOpenGLTexture *texture;
+
 };
 
 #endif // BOLA_H

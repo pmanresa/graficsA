@@ -31,9 +31,9 @@ void Escena::addObjecte(Objecte *obj) {
     if (dynamic_cast<Bola*>(obj))
         this->bola = (Bola*)obj;
 
-    /*if (dynamic_cast<ConjuntBoles*>(obj))
-        this->conjuntBoles = (ConjuntBoles*)obj;
-    */
+    //if (dynamic_cast<ConjuntBoles*>(obj))
+    //    this->conjuntBoles = (ConjuntBoles*)obj;
+
 }
 
 
@@ -106,10 +106,10 @@ void Escena::draw(QGLShaderProgram *pr) {
     }
 
     if (conjuntBoles!=NULL) {
-        for (int i=0; i<conjuntBoles->listaConjuntBoles.size(); i++) {
-            conjuntBoles->listaConjuntBoles[i]->texture->bind(0);
-            conjuntBoles->listaConjuntBoles[i]->toGPU(pr);
-            conjuntBoles->listaConjuntBoles[i]->draw();
+        for (int i=0; i<conjuntBoles->boles.size(); i++) {
+            conjuntBoles->boles[i]->texture->bind(0);
+            conjuntBoles->boles[i]->toGPU(pr);
+            conjuntBoles->boles[i]->draw();
         }
     }
 }
