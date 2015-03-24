@@ -3,51 +3,80 @@
 
 ConjuntBoles::ConjuntBoles(): Objecte(NumVerticesF)
 {
-    xorig=0;yorig=0;zorig=0;
-    capsa.a=1;capsa.h=1;capsa.p=1;
+    GLfloat x0 = 0.;
+    GLfloat y0 = 3.;    //Comença a la posicio y = 3
+    GLfloat z0 = 0.;
 
-    for (int i = 0; i< maxboles; i++){
-        Bola *bola;
-        bola = new Bola((GLfloat)0,(GLfloat)i*5);
-        boles[i] = bola;
+    GLfloat radio = 0.03075;
+
+    Bola *bola;
+
+    capsa.a=1;
+    capsa.h=1;
+    capsa.p=1;
+
+    GLfloat z1 = 0.5;
+    GLfloat x2 = 0.0 - 3 * radio;
+    GLfloat z2 = 0.5 + 2 * radio * cos(30*M_PI/180.0);
+    GLfloat x3 = 0.0 - 4 * radio;
+    GLfloat z3 = 0.5 + 4 * radio * cos(30*M_PI/180.0);
+    GLfloat x4 = 0.0 - 5 * radio;
+    GLfloat z4 = 0.5 + 6 * radio * cos(30*M_PI/180.0);
+    GLfloat x5 = 0.0 - 6 * radio;
+    GLfloat z5 = 0.5 + 8 * radio * cos(30*M_PI/180.0);
+
+    QString indexBola;
+
+    // Colocacio boles
+    for(int i=0; i<15;i++){
+        if(i==0){                       // Primera fila
+            z0 = z1;
+            indexBola = "1";
+
+        }else if(i>0 && i<3){           // Segona fila
+
+            x0 = x2 + 2 * i * radio;
+            z0 = z2;
+
+            if(i==1)indexBola = "10";
+            else indexBola = "2";
+
+        }else if(i>2 && i<6){           // Tercera fila
+
+            x0 = x3 + 2 * (i-2) * radio;
+            z0 = z3;
+
+            if(i==3)indexBola = "3";
+            if(i==4)indexBola = "8";
+            if(i==5)indexBola = "11";
+
+        }else if(i>5 && i<10){          // Quarta fila
+
+            x0 = x4 + 2 * (i-5) * radio;
+            z0 = z4;
+
+            if(i==6)indexBola = "13";
+            if(i==7)indexBola = "4";
+            if(i==8)indexBola = "12";
+            if(i==9)indexBola = "5";
+
+        }else if(i>9 && i<15){          // Quinta fila
+
+            x0 = x5 + 2 * (i-9) * radio;
+            z0 = z5;
+
+            if(i==10)indexBola = "7";
+            if(i==11)indexBola = "14";
+            if(i==12)indexBola = "9";
+            if(i==13)indexBola = "6";
+            if(i==14)indexBola = "15";
+        }
+
+        //Cream la bola
+        bola = new Bola(x0, y0, z0, radio, indexBola);
+        boles.push_back(bola);
     }
 
-}
-
-void ConjuntBoles::make(){
-    for (int i = 0; i< maxboles; i++){
-       boles[i]->make();
-    }
-}
-
-void ConjuntBoles::draw()
-{
-
-    for (int i = 0; i< maxboles; i++){
-        boles[i]->draw();
-    }
-}
-
-void ConjuntBoles::aplicaTG(mat4 m){
-    for (int i = 0 ; i< maxboles; i++){
-        boles[i]->aplicaTG(m);
-    }
-}
-void ConjuntBoles::aplicaTGPoints(mat4 m){
-    for (int i = 0 ; i< maxboles; i++){
-        boles[i]->aplicaTGPoints(m);
-    }
-}
-void ConjuntBoles::aplicaTGCentrat(mat4 m){
-    for (int i = 0 ; i< maxboles; i++){
-        boles[i]->aplicaTGCentrat(m);
-    }
-}
-
-void ConjuntBoles::toGPU(QGLShaderProgram *p){
-    for (int i = 0 ; i< maxboles; i++){
-        boles[i]->toGPU(p);
-    }
 }
 
 ConjuntBoles::~ConjuntBoles()

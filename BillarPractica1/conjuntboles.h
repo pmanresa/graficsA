@@ -18,18 +18,7 @@ public:
     ConjuntBoles();
     ~ConjuntBoles();
 
-    static const int NumVerticesF = 20000000;
-
-    void make();
-    void toGPU(QGLShaderProgram *p);
-    void draw();
-    void aplicaTG(mat4 m);
-    void aplicaTGPoints(mat4 m);
-    void aplicaTGCentrat(mat4 m);
-
-    Bola* boles[maxboles];
-
-
+    vector<Bola*> boles;
 
 };
 

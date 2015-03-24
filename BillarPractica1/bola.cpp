@@ -11,52 +11,25 @@ Bola::Bola() : Objecte(NumVerticesF)
     capsa.h = 1;
     capsa.p = 1;
 
-
-    // Vertices of a unit Bola centered at origin, sides aligned with axes
-    v[0] = point4( 0.0, 0.0, 1.0, 1.0  );
-    v[1] = point4(  0.0, 0.942809, -0.333333, 1.0  );
-    v[2] = point4(  -0.816497, -0.471405, -0.333333, 1.0  );
-    v[3] = point4(  0.816497, -0.471405, -0.333333, 1.0 );
-
-
-    // RGBA colors
-    vertex_colors[0] =    color4( 1.0, 1.0, 1.0, 1.0 );  // black
-    vertex_colors[1] =    color4( 1.0, 1.0, 1.0, 1.0 );  // red
-    vertex_colors[2] =    color4( 1.0, 1.0, 1.0, 1.0 );  // yellow
-    vertex_colors[3] =    color4( 1.0, 1.0, 1.0, 1.0 );  // green
-
-
-    make();
+    //make();
 
 }
 
-Bola::Bola(GLfloat x, GLfloat y) : Objecte(NumVerticesF)
+Bola::Bola(GLfloat x, GLfloat y, GLfloat z, GLfloat radio, QString indexbola) : Objecte(NumVerticesF)
 {
 
     std::cout<<"Estic en el constructor del Bola\n";
     // Bola centrat al 0,0,0 amb dimensió 1 a totes les seves arestes
-    xorig = x; yorig = y; zorig = 0;
+    xorig = x;
+    yorig = y;
+    zorig = z;
+    this->radio = radio;
 
     capsa.a = 1;
     capsa.h = 1;
     capsa.p = 1;
 
-
-    // Vertices of a unit Bola centered at origin, sides aligned with axes
-    v[0] = point4( 0.0, 0.0, 1.0, 1.0  );
-    v[1] = point4(  0.0, 0.942809, -0.333333, 1.0  );
-    v[2] = point4(  -0.816497, -0.471405, -0.333333, 1.0  );
-    v[3] = point4(  0.816497, -0.471405, -0.333333, 1.0 );
-
-
-    // RGBA colors
-    vertex_colors[0] =    color4( 1.0, 1.0, 1.0, 1.0 );  // black
-    vertex_colors[1] =    color4( 1.0, 1.0, 1.0, 1.0 );  // red
-    vertex_colors[2] =    color4( 1.0, 1.0, 1.0, 1.0 );  // yellow
-    vertex_colors[3] =    color4( 1.0, 1.0, 1.0, 1.0 );  // green
-
-
-    make();
+    make(indexbola);
 
 }
 
@@ -81,11 +54,25 @@ void Bola::triangle( const point4& a, const point4& b, const point4& c )
 
 // Realitzacio de la geometria del Bola en una genList o en el vertex array, segons el que visualitzem
 
-void Bola::make()
+void Bola::make(QString indexbola)
 {
     std::cout<<"Estic en el make de la Bola\n";
+
     // generacio de la geometria dels triangles per a visualitzar-lo
     Index = 0;
+
+    // Vertices of a unit Bola centered at origin, sides aligned with axes
+    v[0] = point4( 0.0, 0.0, 1.0, 1.0  );
+    v[1] = point4(  0.0, 0.942809, -0.333333, 1.0  );
+    v[2] = point4(  -0.816497, -0.471405, -0.333333, 1.0  );
+    v[3] = point4(  0.816497, -0.471405, -0.333333, 1.0 );
+
+
+    // RGBA colors
+    vertex_colors[0] =    color4( 1.0, 1.0, 1.0, 1.0 );  // black
+    vertex_colors[1] =    color4( 1.0, 1.0, 1.0, 1.0 );  // red
+    vertex_colors[2] =    color4( 1.0, 1.0, 1.0, 1.0 );  // yellow
+    vertex_colors[3] =    color4( 1.0, 1.0, 1.0, 1.0 );  // green
 
     point4 v1;
     point4 v2;
@@ -104,12 +91,7 @@ void Bola::make()
     divide_triangle(v[0], v[3], v[1], 0);
     divide_triangle(v[0], v[2], v[3], 0);
 
-    // Translacio + Escalat
-    /*mat4 trans = Translate(xorig, yorig, zorig);
-    mat4 escalat = Scale(capsa.a,capsa.h,capsa.p);
-    aplicaTG(trans*escalat);
-*/
-    //initTextura();
+    //initTextura(indexbola);
 
 }
 
@@ -156,14 +138,16 @@ point4 Bola::normalize(point4 vector){
 
 }
 
-void Bola::initTextura()
+void Bola::initTextura(QString indexBola)
  {
      qDebug() << "Initializing textures...";
 
+     QString fileTextura = "://resources/Bola";
+     fileTextura.append(indexBola).append(".jpg");
 
      // Carregar la textura
      glActiveTexture(GL_TEXTURE1);
-     texture = new QOpenGLTexture(QImage("://resources/Bola4.jpg"));
+     texture = new QOpenGLTexture(QImage(fileTextura));
      texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
      texture->setMagnificationFilter(QOpenGLTexture::Linear);
 

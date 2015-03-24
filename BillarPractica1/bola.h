@@ -14,7 +14,7 @@ class Bola: public Objecte
 {
 public:
     Bola();
-    Bola(GLfloat x, GLfloat y);
+    Bola(GLfloat x, GLfloat y, GLfloat z, double radio, QString indexbola);
     ~Bola();
     void make();
 
@@ -22,17 +22,17 @@ public:
 private:
 
     void triangle( const point4& a, const point4& b, const point4& c );
-    void initTextura();
     point4 normalize(point4);
     void divide_triangle( const point4& a, const point4& b, const point4& c, int i );
+    void initTextura(QString indexBola);
+
+    GLfloat radio;
 
     static const int NumVerticesF = 2000000;
-
-    int NumMaxIteracions = 4;
+    int NumMaxIteracions = 5;
 
     point4 v[4]; // 4 vertexs de la Bola (tetraedre inicial)
     color4 vertex_colors[4]; // 4 colors RGBA associats a cada vertex
-
     QOpenGLTexture *texture;
 };
 

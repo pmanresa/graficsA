@@ -31,8 +31,9 @@ void Escena::addObjecte(Objecte *obj) {
     if (dynamic_cast<Bola*>(obj))
         this->bola = (Bola*)obj;
 
-    if (dynamic_cast<ConjuntBoles*>(obj))
+    /*if (dynamic_cast<ConjuntBoles*>(obj))
         this->conjuntBoles = (ConjuntBoles*)obj;
+    */
 }
 
 
@@ -56,8 +57,11 @@ void Escena::aplicaTG(mat4 m) {
         bola->aplicaTG(m);
 
 
-    if (conjuntBoles!=NULL)
-        conjuntBoles->aplicaTG(m);
+    if (conjuntBoles!=NULL) {
+        for (int i=0; i<conjuntBoles->boles.size();i++)
+            conjuntBoles->boles[i]->aplicaTG(m);
+    }
+
 
 }
 
@@ -74,28 +78,40 @@ void Escena::aplicaTGCentrat(mat4 m) {
     if (bola!=NULL)
         bola->aplicaTGCentrat(m);
 
-    if (conjuntBoles!=NULL)
-        conjuntBoles->aplicaTGCentrat(m);
+    if (conjuntBoles!=NULL) {
+        for (int i=0; i<conjuntBoles->boles.size();i++)
+            conjuntBoles->boles[i]->aplicaTGCentrat(m);
+    }
 
 
 }
 
-void Escena::draw() {
+void Escena::draw(QGLShaderProgram *pr) {
 
     // Metode a modificar
 
     if (taulaBillar!=NULL)
         taulaBillar->draw();
 
-    if (plaBase!=NULL)
+    if (plaBase!=NULL) { //Provant combinacions hem trobat que posant aqui la textura i gpu funciona
+        plaBase->texture->bind(0);
+        plaBase->toGPU(pr);
         plaBase->draw();
+    }
 
-    if (bola!=NULL)
+    if (bola!=NULL) {
+        bola->texture->bind(0);
+        bola->toGPU(pr);
         bola->draw();
+    }
 
-    if (conjuntBoles!=NULL)
-        conjuntBoles->draw();
-
+    if (conjuntBoles!=NULL) {
+        for (int i=0; i<conjuntBoles->listaConjuntBoles.size(); i++) {
+            conjuntBoles->listaConjuntBoles[i]->texture->bind(0);
+            conjuntBoles->listaConjuntBoles[i]->toGPU(pr);
+            conjuntBoles->listaConjuntBoles[i]->draw();
+        }
+    }
 }
 
 
